@@ -188,13 +188,13 @@ module.exports = grammar({
         field("type", $._type),
         repeat(
           choice(
+            $.named_constraint,
             $.column_default,
             $.primary_key_constraint,
             $.check_constraint,
             $.references_constraint,
             $.unique_constraint,
             $.null_constraint,
-            $.named_constraint,
             $.direction_constraint,
             $.auto_increment_constraint,
           ),
@@ -202,7 +202,7 @@ module.exports = grammar({
       ),
     auto_increment_constraint: _ => "auto_increment",
     direction_constraint: _ => choice(kw("ASC"), kw("DESC")),
-    named_constraint: $ => seq("CONSTRAINT", $.identifier),
+    named_constraint: $ => seq(kw("CONSTRAINT"), $.identifier),
     column_default: $ =>
       seq(
         kw("DEFAULT"),
@@ -211,6 +211,7 @@ module.exports = grammar({
         choice(
           choice(
             $._parenthesized_expression,
+            $.number,
             $.string,
             $.identifier,
             $.function_call,
@@ -418,10 +419,16 @@ module.exports = grammar({
     type: $ =>
       seq(
         $._identifier,
+        optional("varying"),
         optional(seq("(", $.number, ")")),
         optional(seq(choice("without", "with"), "time", "zone")),
       ),
-    identifier: $ => choice($._identifier, seq("`", $._identifier, "`")),
+    identifier: $ =>
+      choice(
+        $._identifier,
+        seq("`", $._identifier, "`"),
+        seq('"', $._identifier, '"'),
+      ),
     _identifier: _ => /([a-zA-Z_][0-9a-zA-Z_]*)/,
     string: $ =>
       choice(

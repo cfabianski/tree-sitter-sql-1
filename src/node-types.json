@@ -3305,6 +3305,10 @@
     }
   },
   {
+    "type": "\"",
+    "named": false
+  },
+  {
     "type": "$",
     "named": false
   },
@@ -3726,6 +3730,10 @@
   },
   {
     "type": "time",
+    "named": false
+  },
+  {
+    "type": "varying",
     "named": false
   },
   {
